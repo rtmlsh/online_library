@@ -1,6 +1,7 @@
 /.idea
 .env
 /venv
+/books
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
