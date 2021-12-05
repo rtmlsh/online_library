@@ -55,6 +55,15 @@ def download_comments(id):
         print(comment.text.split(')')[-1])
 
 
+def get_genre(id):
+    url = f'https://tululu.org/b{id}/'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    genre = soup.find('span', class_='d_book')
+    print(genre.text.split(':')[-1].replace('.', '').strip())
+
+
 def check_redirect(response):
     if response:
         raise requests.HTTPError('Redirect to main')
@@ -72,6 +81,7 @@ for id in range(5, 11):
         download_txt(title, folder, id)
         img_url = get_img_url(id)
         download_img(img_folder, img_url)
+        # get_genre(id)
         # download_comments(id)
     except:
         continue
