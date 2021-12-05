@@ -3,10 +3,10 @@ import os
 from pathvalidate import sanitize_filename
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+import pprint
 
 
-def title_book(id):
-    url = f'https://tululu.org/b{id}/'
+def title_book(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
@@ -45,23 +45,37 @@ def download_txt(title, folder, id):
     return filepath
 
 
-def download_comments(id):
-    url = f'https://tululu.org/b{id}/'
+def get_comments(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
-    comments = soup.find_all(class_='texts')
-    for comment in comments:
-        print(comment.text.split(')')[-1])
+    user_comments = soup.find_all(class_='texts')
+    comments = []
+    for comment in user_comments:
+        comments.append(comment.text.split(')')[-1])
+    return comments
 
 
-def get_genre(id):
-    url = f'https://tululu.org/b{id}/'
+def get_genre(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
     genre = soup.find('span', class_='d_book')
-    print(genre.text.split(':')[-1].replace('.', '').strip())
+    return genre.text.split(':')[-1].replace('.', '').strip()
+
+
+def parse_book_page(id):
+    url = f'https://tululu.org/b{id}/'
+    title, author = title_book(url)
+    genre = get_genre(url)
+    comments = get_comments(url)
+    book_description = {
+        'Автор': author,
+        'Название': title,
+        'Жанр': genre,
+        'Отзывы': comments
+    }
+    return title, book_description
 
 
 def check_redirect(response):
@@ -77,12 +91,11 @@ os.makedirs(folder, exist_ok=True)
 
 for id in range(5, 11):
     try:
-        title, author = title_book(id)
+        title, book_description = parse_book_page(id)
         download_txt(title, folder, id)
         img_url = get_img_url(id)
         download_img(img_folder, img_url)
-        # get_genre(id)
-        # download_comments(id)
+        pprint.pprint(book_description)
     except:
         continue
 
