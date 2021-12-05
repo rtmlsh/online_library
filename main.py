@@ -2,6 +2,7 @@ import requests
 import os
 from pathvalidate import sanitize_filename
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
 
 
 def title_book(id):
@@ -14,9 +15,22 @@ def title_book(id):
             book_spec.strip().split('::')[1].strip())
 
 
-def check_redirect(response):
-    if response:
-        raise requests.HTTPError('Redirect to main')
+def get_img_url(id):
+    url = f'https://tululu.org/b{id}/'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    anchor = soup.find(class_='bookimage').find('img')['src']
+    return urljoin(url, anchor)
+
+
+def download_img(img_folder, img_url):
+    response = requests.get(img_url)
+    response.raise_for_status()
+    img_name = urlparse(img_url).path.split('/')[-1]
+    filepath = os.path.join(img_folder, img_name)
+    with open(f'{filepath}', 'wb') as file:
+        file.write(response.content)
 
 
 def download_txt(title, folder, id):
@@ -31,14 +45,22 @@ def download_txt(title, folder, id):
     return filepath
 
 
-folder = 'books/'
+def check_redirect(response):
+    if response:
+        raise requests.HTTPError('Redirect to main')
+
+
+folder = 'books'
+img_folder = 'images'
+os.makedirs(img_folder, exist_ok=True)
 os.makedirs(folder, exist_ok=True)
-for id in range(1, 11):
+
+
+for id in range(5, 11):
     try:
         title, author = title_book(id)
-        filepath = download_txt(title, folder, id)
-        print(filepath)
+        download_txt(title, folder, id)
+        img_url = get_img_url(id)
+        download_img(img_folder, img_url)
     except:
         continue
-
-
