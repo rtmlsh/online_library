@@ -1,3 +1,4 @@
+import argparse
 import requests
 import os
 from pathvalidate import sanitize_filename
@@ -70,6 +71,7 @@ def parse_book_page(id):
     genre = get_genre(url)
     comments = get_comments(url)
     book_description = {
+        'id': id,
         'Автор': author,
         'Название': title,
         'Жанр': genre,
@@ -83,20 +85,38 @@ def check_redirect(response):
         raise requests.HTTPError('Redirect to main')
 
 
-folder = 'books'
-img_folder = 'images'
-os.makedirs(img_folder, exist_ok=True)
-os.makedirs(folder, exist_ok=True)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Скрипт парсит данные сайта tululu.org'
+                    'скачивает книги и показывает её данные'
+    )
 
+    parser.add_argument(
+        'start_id',
+        help='Укажите start_id',
+    )
 
-for id in range(5, 11):
-    try:
-        title, book_description = parse_book_page(id)
-        download_txt(title, folder, id)
-        img_url = get_img_url(id)
-        download_img(img_folder, img_url)
-        pprint.pprint(book_description)
-    except:
-        continue
+    parser.add_argument(
+        'end_id',
+        help='Укажите end_id',
+    )
+
+    args = parser.parse_args()
+    parser.parse_args()
+
+    folder = 'books'
+    img_folder = 'images'
+    os.makedirs(img_folder, exist_ok=True)
+    os.makedirs(folder, exist_ok=True)
+
+    for id in range(int(args.start_id), int(args.end_id)):
+        try:
+            title, book_description = parse_book_page(id)
+            download_txt(title, folder, id)
+            img_url = get_img_url(id)
+            download_img(img_folder, img_url)
+            pprint.pprint(book_description)
+        except:
+            continue
 
 
