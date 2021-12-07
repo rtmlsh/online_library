@@ -7,13 +7,23 @@ from urllib.parse import urljoin, urlparse
 import pprint
 
 
-def title_book(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    book_spec = soup.find('body').find('h1').text
+def title_book(html_page):
+    book_spec = html_page.find('body').find('h1').text
     return (book_spec.strip().split('::')[0].strip(),
             book_spec.strip().split('::')[1].strip())
+
+
+def get_genre(html_page):
+    genre = html_page.find('span', class_='d_book')
+    return genre.text.split(':')[-1].replace('.', '').strip()
+
+
+def get_comments(html_page):
+    user_comments = html_page.find_all(class_='texts')
+    comments = []
+    for comment in user_comments:
+        comments.append(comment.text.split(')')[-1])
+    return comments
 
 
 def get_img_url(id):
@@ -46,30 +56,14 @@ def download_txt(title, folder, id):
     return filepath
 
 
-def get_comments(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    user_comments = soup.find_all(class_='texts')
-    comments = []
-    for comment in user_comments:
-        comments.append(comment.text.split(')')[-1])
-    return comments
-
-
-def get_genre(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    genre = soup.find('span', class_='d_book')
-    return genre.text.split(':')[-1].replace('.', '').strip()
-
-
 def parse_book_page(id):
     url = f'https://tululu.org/b{id}/'
-    title, author = title_book(url)
-    genre = get_genre(url)
-    comments = get_comments(url)
+    response = requests.get(url)
+    response.raise_for_status()
+    html_page = BeautifulSoup(response.text, 'lxml')
+    title, author = title_book(html_page)
+    genre = get_genre(html_page)
+    comments = get_comments(html_page)
     book_description = {
         'id': id,
         'Автор': author,
