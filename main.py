@@ -1,10 +1,11 @@
 import argparse
-import requests
 import os
-from pathvalidate import sanitize_filename
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
 import pprint
+from urllib.parse import urljoin, urlparse
+
+import requests
+from bs4 import BeautifulSoup
+from pathvalidate import sanitize_filename
 
 
 def title_book(html_page):
@@ -98,8 +99,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     parser.parse_args()
 
-    folder = 'books'
-    img_folder = 'images'
+    folder, img_folder = 'books', 'images'
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(folder, exist_ok=True)
 
@@ -112,5 +112,3 @@ if __name__ == '__main__':
             pprint.pprint(book_description)
         except:
             continue
-
-
