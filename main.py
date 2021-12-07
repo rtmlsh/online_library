@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 
-def title_book(html_page):
+def get_book_spec(html_page):
     book_spec = html_page.find('body').find('h1').text
     return (book_spec.strip().split('::')[0].strip(),
             book_spec.strip().split('::')[1].strip())
@@ -62,7 +62,7 @@ def parse_book_page(id):
     response = requests.get(url)
     response.raise_for_status()
     html_page = BeautifulSoup(response.text, 'lxml')
-    title, author = title_book(html_page)
+    title, author = get_book_spec(html_page)
     genre = get_genre(html_page)
     comments = get_comments(html_page)
     book_description = {
