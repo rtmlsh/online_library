@@ -54,9 +54,7 @@ def parse_book_page(html_page, book_id):
     genre = html_page.find('span', class_='d_book')
     book_genre = genre.text.split(':')[-1].replace('.', '').strip()
     user_comments = html_page.find_all(class_='texts')
-    comments = []
-    for comment in user_comments:
-        comments.append(comment.text.split(')')[-1])
+    comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
         'id': book_id,
         'Автор': author,
