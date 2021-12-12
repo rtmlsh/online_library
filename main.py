@@ -101,7 +101,6 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-    parser.parse_args()
 
     folder, img_folder = 'books', 'images'
     os.makedirs(img_folder, exist_ok=True)
