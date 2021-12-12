@@ -87,13 +87,17 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        'start_id',
-        help='Укажите start_id',
+        '--start_id',
+        type=int,
+        default=1,
+        help='Укажите start_id'
     )
 
     parser.add_argument(
-        'end_id',
-        help='Укажите end_id',
+        '--end_id',
+        type=int,
+        default=10,
+        help='Укажите end_id'
     )
 
     args = parser.parse_args()
@@ -103,7 +107,7 @@ if __name__ == '__main__':
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(folder, exist_ok=True)
 
-    for id in range(int(args.start_id), int(args.end_id)):
+    for id in range(args.start_id, args.end_id):
         try:
             title, book_description = parse_book_page(id)
             download_txt(title, folder, id)
