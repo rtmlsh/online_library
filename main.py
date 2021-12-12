@@ -61,6 +61,7 @@ def parse_book_page(book_id):
     url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url)
     response.raise_for_status()
+    check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
     title, author = get_book_spec(html_page)
     genre = get_genre(html_page)
