@@ -27,8 +27,8 @@ def get_comments(html_page):
     return comments
 
 
-def get_img_url(id):
-    url = f'https://tululu.org/b{id}/'
+def get_img_url(book_id):
+    url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
@@ -45,20 +45,20 @@ def download_img(img_folder, img_url):
         file.write(response.content)
 
 
-def download_txt(title, folder, id):
+def download_txt(title, folder, book_id):
     url = 'https://tululu.org/txt.php'
-    payload = {'id': id}
+    payload = {'id': book_id}
     response = requests.get(url, params=payload)
     response.raise_for_status()
     check_redirect(response.history)
-    filepath = os.path.join(folder, f'{id}.{sanitize_filename(title)}.txt')
+    filepath = os.path.join(folder, f'{book_id}.{sanitize_filename(title)}.txt')
     with open(f'{filepath}', 'w') as file:
         file.write(response.text)
     return filepath
 
 
-def parse_book_page(id):
-    url = f'https://tululu.org/b{id}/'
+def parse_book_page(book_id):
+    url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url)
     response.raise_for_status()
     html_page = BeautifulSoup(response.text, 'lxml')
@@ -66,7 +66,7 @@ def parse_book_page(id):
     genre = get_genre(html_page)
     comments = get_comments(html_page)
     book_description = {
-        'id': id,
+        'id': book_id,
         'Автор': author,
         'Название': title,
         'Жанр': genre,
@@ -106,11 +106,11 @@ if __name__ == '__main__':
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(folder, exist_ok=True)
 
-    for id in range(args.start_id, args.end_id):
+    for book_id in range(args.start_id, args.end_id):
         try:
-            title, book_description = parse_book_page(id)
-            download_txt(title, folder, id)
-            img_url = get_img_url(id)
+            title, book_description = parse_book_page(book_id)
+            download_txt(title, folder, book_id)
+            img_url = get_img_url(book_id)
             download_img(img_folder, img_url)
             pprint.pprint(book_description)
         except:
