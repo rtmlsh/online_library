@@ -8,25 +8,6 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 
-def get_book_spec(html_page):
-    book_spec = html_page.find('body').find('h1').text
-    return (book_spec.strip().split('::')[0].strip(),
-            book_spec.strip().split('::')[1].strip())
-
-
-def get_genre(html_page):
-    genre = html_page.find('span', class_='d_book')
-    return genre.text.split(':')[-1].replace('.', '').strip()
-
-
-def get_comments(html_page):
-    user_comments = html_page.find_all(class_='texts')
-    comments = []
-    for comment in user_comments:
-        comments.append(comment.text.split(')')[-1])
-    return comments
-
-
 def get_img_url(book_id):
     url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url)
@@ -57,20 +38,30 @@ def download_txt(title, folder, book_id):
     return filepath
 
 
-def parse_book_page(book_id):
+def get_book_page(book_id):
     url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url)
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    title, author = get_book_spec(html_page)
-    genre = get_genre(html_page)
-    comments = get_comments(html_page)
+    return html_page
+
+
+def parse_book_page(html_page, book_id):
+    book_spec = html_page.find('body').find('h1').text
+    title = book_spec.strip().split('::')[0].strip()
+    author = book_spec.strip().split('::')[1].strip()
+    genre = html_page.find('span', class_='d_book')
+    book_genre = genre.text.split(':')[-1].replace('.', '').strip()
+    user_comments = html_page.find_all(class_='texts')
+    comments = []
+    for comment in user_comments:
+        comments.append(comment.text.split(')')[-1])
     book_description = {
         'id': book_id,
         'Автор': author,
         'Название': title,
-        'Жанр': genre,
+        'Жанр': book_genre,
         'Отзывы': comments
     }
     return title, book_description
@@ -109,7 +100,8 @@ if __name__ == '__main__':
 
     for book_id in range(args.start_id, args.end_id):
         try:
-            title, book_description = parse_book_page(book_id)
+            html_page = get_book_page(book_id)
+            title, book_description = parse_book_page(html_page, book_id)
             download_txt(title, folder, book_id)
             img_url = get_img_url(book_id)
             download_img(img_folder, img_url)
