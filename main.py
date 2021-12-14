@@ -54,7 +54,7 @@ def parse_book_page(html_page, book_id, url):
         'Жанр': book_genre,
         'Отзывы': comments
     }
-    return title, book_description, urljoin(url, anchor)
+    return book_description, urljoin(url, anchor)
 
 
 def check_redirect(response_history):
@@ -91,8 +91,8 @@ if __name__ == '__main__':
     for book_id in range(args.start_id, args.end_id):
         try:
             html_page, url = get_book_page(book_id)
-            title, book_description, img_url = parse_book_page(html_page, book_id, url)
-            download_txt(title, folder, book_id)
+            book_description, img_url = parse_book_page(html_page, book_id, url)
+            download_txt(book_description['Название'], folder, book_id)
             download_img(img_folder, img_url)
             pprint.pprint(book_description)
         except:
