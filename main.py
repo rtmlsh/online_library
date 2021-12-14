@@ -57,8 +57,8 @@ def parse_book_page(html_page, book_id, url):
     return title, book_description, urljoin(url, anchor)
 
 
-def check_redirect(response):
-    if response:
+def check_redirect(response_history):
+    if response_history:
         raise requests.HTTPError('Redirect to main')
 
 
