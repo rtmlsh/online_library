@@ -8,15 +8,6 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 
-def get_img_url(book_id):
-    url = f'https://tululu.org/b{book_id}/'
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    anchor = soup.find(class_='bookimage').find('img')['src']
-    return urljoin(url, anchor)
-
-
 def download_img(img_folder, img_url):
     response = requests.get(img_url)
     response.raise_for_status()
@@ -44,15 +35,16 @@ def get_book_page(book_id):
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    return html_page
+    return html_page, url
 
 
-def parse_book_page(html_page, book_id):
+def parse_book_page(html_page, book_id, url):
     book_spec = html_page.find('body').find('h1').text
     title = book_spec.strip().split('::')[0].strip()
     author = book_spec.strip().split('::')[1].strip()
     genre = html_page.find('span', class_='d_book')
     book_genre = genre.text.split(':')[-1].replace('.', '').strip()
+    anchor = html_page.find(class_='bookimage').find('img')['src']
     user_comments = html_page.find_all(class_='texts')
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
@@ -62,7 +54,7 @@ def parse_book_page(html_page, book_id):
         'Жанр': book_genre,
         'Отзывы': comments
     }
-    return title, book_description
+    return title, book_description, urljoin(url, anchor)
 
 
 def check_redirect(response):
@@ -98,10 +90,9 @@ if __name__ == '__main__':
 
     for book_id in range(args.start_id, args.end_id):
         try:
-            html_page = get_book_page(book_id)
-            title, book_description = parse_book_page(html_page, book_id)
+            html_page, url = get_book_page(book_id)
+            title, book_description, img_url = parse_book_page(html_page, book_id, url)
             download_txt(title, folder, book_id)
-            img_url = get_img_url(book_id)
             download_img(img_folder, img_url)
             pprint.pprint(book_description)
         except:
