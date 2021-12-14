@@ -95,5 +95,5 @@ if __name__ == '__main__':
             download_txt(book_description['Название'], folder, book_id)
             download_img(img_folder, img_url)
             pprint.pprint(book_description)
-        except:
+        except requests.HTTPError:
             continue
