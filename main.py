@@ -23,7 +23,10 @@ def download_txt(title, folder, book_id):
     response = requests.get(url, params=payload)
     response.raise_for_status()
     check_redirect(response.history)
-    filepath = os.path.join(folder, f'{book_id}.{sanitize_filename(title)}.txt')
+    filepath = os.path.join(
+        folder,
+        f'{book_id}.{sanitize_filename(title)}.txt'
+    )
     with open(f'{filepath}', 'w') as file:
         file.write(response.text)
     return filepath
@@ -91,7 +94,11 @@ if __name__ == '__main__':
     for book_id in range(args.start_id, args.end_id):
         try:
             html_page, url = get_book_page(book_id)
-            book_description, img_url = parse_book_page(html_page, book_id, url)
+            book_description, img_url = parse_book_page(
+                html_page,
+                book_id,
+                url
+            )
             download_txt(book_description['Название'], folder, book_id)
             download_img(img_folder, img_url)
             pprint.pprint(book_description)
