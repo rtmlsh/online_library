@@ -54,9 +54,10 @@ def parse_book_page(html_page, book_id, url):
         'Автор': author.strip(),
         'Название': title.strip(),
         'Жанр': book_genre,
-        'Отзывы': comments
+        'Отзывы': comments,
+        'Ссылка на картинку': urljoin(url, anchor)
     }
-    return book_description, urljoin(url, anchor)
+    return book_description
 
 
 def check_redirect(response_history):
@@ -93,13 +94,13 @@ if __name__ == '__main__':
     for book_id in range(args.start_id, args.end_id):
         try:
             html_page, url = get_book_page(book_id)
-            book_description, img_url = parse_book_page(
+            book_description = parse_book_page(
                 html_page,
                 book_id,
                 url
             )
             download_txt(book_description['Название'], folder, book_id)
-            download_img(img_folder, img_url)
+            download_img(img_folder, book_description['Ссылка на картинку'])
             pprint.pprint(book_description)
         except requests.HTTPError:
             continue
