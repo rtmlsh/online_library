@@ -44,8 +44,8 @@ def get_book_page(book_id):
 def parse_book_page(html_page, book_id, url):
     book_spec = html_page.find('body').find('h1').text
     title, author = book_spec.strip().split('::')
-    genre = html_page.find('span', class_='d_book')
-    book_genre = genre.text.split(':')[-1].replace('.', '').strip()
+    genre = html_page.find('span', class_='d_book').text
+    book_genre = genre.split(':')[-1].replace('.', '').strip()
     anchor = html_page.find(class_='bookimage').find('img')['src']
     user_comments = html_page.find_all(class_='texts')
     comments = [comment.text.split(')')[-1] for comment in user_comments]
