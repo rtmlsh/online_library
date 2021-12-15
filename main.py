@@ -43,8 +43,7 @@ def get_book_page(book_id):
 
 def parse_book_page(html_page, book_id, url):
     book_spec = html_page.find('body').find('h1').text
-    title = book_spec.strip().split('::')[0].strip()
-    author = book_spec.strip().split('::')[1].strip()
+    title, author = book_spec.strip().split('::')
     genre = html_page.find('span', class_='d_book')
     book_genre = genre.text.split(':')[-1].replace('.', '').strip()
     anchor = html_page.find(class_='bookimage').find('img')['src']
@@ -52,8 +51,8 @@ def parse_book_page(html_page, book_id, url):
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
         'id': book_id,
-        'Автор': author,
-        'Название': title,
+        'Автор': author.strip(),
+        'Название': title.strip(),
         'Жанр': book_genre,
         'Отзывы': comments
     }
