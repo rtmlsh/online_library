@@ -39,7 +39,7 @@ def get_book_page(url):
     return html_page
 
 
-def parse_book_page(html_page, url):
+def parse_book_page(html_page, url, folder, img_folder):
     book_spec = html_page.find('body').find('h1').text
     title, author = book_spec.strip().split('::')
     genre = html_page.find('span', class_='d_book').text
@@ -48,11 +48,13 @@ def parse_book_page(html_page, url):
     user_comments = html_page.find_all(class_='texts')
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
-        'Автор': author.strip(),
-        'Название': title.strip(),
-        'Жанр': book_genre,
-        'Отзывы': comments,
-        'Ссылка на картинку': urljoin(url, anchor)
+        'author': author.strip(),
+        'title': title.strip(),
+        'genre': book_genre,
+        'reviews': comments,
+        'img_url': urljoin(url, anchor),
+        'img_src': f'{img_folder}/{anchor.split("/")[-1]}',
+        'book_path': f'{folder}/{title.strip()}.txt'
     }
     return book_description
 
@@ -94,9 +96,9 @@ if __name__ == '__main__':
             book_urls = parse_book_urls(page_id)
             for url in book_urls:
                 html_page = get_book_page(url)
-                book_description = parse_book_page(html_page, url)
-                download_txt(book_description['Название'], folder, url)
-                download_img(img_folder, book_description['Ссылка на картинку'])
+                book_description = parse_book_page(html_page, url, folder, img_folder)
+                download_txt(book_description['title'], folder, url)
+                download_img(img_folder, book_description['img_url'])
                 book_descriptions.append(book_description)
         except requests.HTTPError:
             continue
