@@ -1,11 +1,12 @@
 import argparse
 import os
-import pprint
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+import json
+from parse_category import parse_book_urls
 
 
 def download_img(img_folder, img_url):
@@ -17,31 +18,28 @@ def download_img(img_folder, img_url):
         file.write(response.content)
 
 
-def download_txt(title, folder, book_id):
-    url = 'https://tululu.org/txt.php'
+def download_txt(title, folder, url):
+    book_id = urlparse(url).path.strip('/').split('b')[-1]
+    download_url = 'https://tululu.org/txt.php'
     payload = {'id': book_id}
-    response = requests.get(url, params=payload)
+    response = requests.get(download_url, params=payload)
     response.raise_for_status()
     check_redirect(response.history)
-    filepath = os.path.join(
-        folder,
-        f'{book_id}.{sanitize_filename(title)}.txt'
-    )
+    filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
     with open(f'{filepath}', 'w') as file:
         file.write(response.text)
     return filepath
 
 
-def get_book_page(book_id):
-    url = f'https://tululu.org/b{book_id}/'
+def get_book_page(url):
     response = requests.get(url)
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    return html_page, url
+    return html_page
 
 
-def parse_book_page(html_page, book_id, url):
+def parse_book_page(html_page, url):
     book_spec = html_page.find('body').find('h1').text
     title, author = book_spec.strip().split('::')
     genre = html_page.find('span', class_='d_book').text
@@ -50,7 +48,6 @@ def parse_book_page(html_page, book_id, url):
     user_comments = html_page.find_all(class_='texts')
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
-        'id': book_id,
         'Автор': author.strip(),
         'Название': title.strip(),
         'Жанр': book_genre,
@@ -81,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--end_id',
         type=int,
-        default=10,
+        default=5,
         help='Укажите end_id'
     )
 
@@ -91,16 +88,21 @@ if __name__ == '__main__':
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(folder, exist_ok=True)
 
-    for book_id in range(args.start_id, args.end_id):
+    book_descriptions = []
+    for page_id in range(args.start_id, args.end_id):
         try:
-            html_page, url = get_book_page(book_id)
-            book_description = parse_book_page(
-                html_page,
-                book_id,
-                url
-            )
-            download_txt(book_description['Название'], folder, book_id)
-            download_img(img_folder, book_description['Ссылка на картинку'])
-            pprint.pprint(book_description)
+            book_urls = parse_book_urls(page_id)
+            for url in book_urls:
+                html_page = get_book_page(url)
+                book_description = parse_book_page(html_page, url)
+                download_txt(book_description['Название'], folder, url)
+                download_img(img_folder, book_description['Ссылка на картинку'])
+                book_descriptions.append(book_description)
         except requests.HTTPError:
             continue
+
+    with open('books.json', 'w') as file:
+        json.dump(book_descriptions, file, ensure_ascii=False)
+
+
+
