@@ -40,12 +40,16 @@ def get_book_page(url):
 
 
 def parse_book_page(html_page, url, folder, img_folder):
-    book_spec = html_page.find('body').find('h1').text
+    book_spec_selector = 'body h1'
+    genre_selector = 'span.d_book'
+    anchor_selector = '.bookimage img'
+    user_comments_selector = '.texts'
+    book_spec = html_page.select_one(book_spec_selector).text
     title, author = book_spec.strip().split('::')
-    genre = html_page.find('span', class_='d_book').text
+    genre = html_page.select_one(genre_selector).text
     book_genre = genre.split(':')[-1].replace('.', '').strip()
-    anchor = html_page.find(class_='bookimage').find('img')['src']
-    user_comments = html_page.find_all(class_='texts')
+    anchor = html_page.select_one(anchor_selector)['src']
+    user_comments = html_page.select(user_comments_selector)
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
         'author': author.strip(),
