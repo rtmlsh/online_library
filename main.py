@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--end_id',
         type=int,
-        default=5,
+        default=702,
         help='Укажите end_id'
     )
 
@@ -104,6 +104,7 @@ if __name__ == '__main__':
                 download_txt(book_description['title'], folder, url)
                 download_img(img_folder, book_description['img_url'])
                 book_descriptions.append(book_description)
+                print(url)
         except requests.HTTPError:
             continue
 
