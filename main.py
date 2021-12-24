@@ -9,26 +9,28 @@ import json
 from parse_category import parse_book_urls
 
 
-def download_img(img_folder, img_url):
-    response = requests.get(img_url)
-    response.raise_for_status()
-    img_name = urlparse(img_url).path.split('/')[-1]
-    filepath = os.path.join(img_folder, img_name)
-    with open(f'{filepath}', 'wb') as file:
-        file.write(response.content)
+def download_img(img_folder, img_url, load_images=True):
+    if load_images:
+        response = requests.get(img_url)
+        response.raise_for_status()
+        img_name = urlparse(img_url).path.split('/')[-1]
+        filepath = os.path.join(img_folder, img_name)
+        with open(f'{filepath}', 'wb') as file:
+            file.write(response.content)
 
 
-def download_txt(title, folder, url):
-    book_id = urlparse(url).path.strip('/').split('b')[-1]
-    download_url = 'https://tululu.org/txt.php'
-    payload = {'id': book_id}
-    response = requests.get(download_url, params=payload)
-    response.raise_for_status()
-    check_redirect(response.history)
-    filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
-    with open(f'{filepath}', 'w') as file:
-        file.write(response.text)
-    return filepath
+def download_txt(title, folder, url, load_txt=True):
+    if load_txt:
+        book_id = urlparse(url).path.strip('/').split('b')[-1]
+        download_url = 'https://tululu.org/txt.php'
+        payload = {'id': book_id}
+        response = requests.get(download_url, params=payload)
+        response.raise_for_status()
+        check_redirect(response.history)
+        filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
+        with open(f'{filepath}', 'w') as file:
+            file.write(response.text)
+        return filepath
 
 
 def get_book_page(url):
@@ -88,11 +90,38 @@ if __name__ == '__main__':
         help='Укажите end_id'
     )
 
+    parser.add_argument(
+        '--dest_folder',
+        default='results',
+        help='Укажите каталог для сохранения результатов',
+    )
+
+    parser.add_argument(
+        '--json_path',
+        default='results',
+        help='Укажите каталог для сохранения json'
+    )
+
+    parser.add_argument(
+        '--skip_imgs',
+        action='store_false',
+        help='Булево значение false, если картинки не нужны'
+    )
+
+    parser.add_argument(
+        '--skip_txt',
+        action='store_false',
+        help='Булево значение false, если txt не нужны'
+    )
+
     args = parser.parse_args()
 
-    folder, img_folder = 'books', 'images'
-    os.makedirs(img_folder, exist_ok=True)
+    folder, img_folder = f'{args.dest_folder}/books', f'{args.dest_folder}/images'
+    json_folder = args.json_path
     os.makedirs(folder, exist_ok=True)
+    os.makedirs(img_folder, exist_ok=True)
+    os.makedirs(json_folder, exist_ok=True)
+
 
     book_descriptions = []
     for page_id in range(args.start_id, args.end_id):
@@ -101,15 +130,12 @@ if __name__ == '__main__':
             for url in book_urls:
                 html_page = get_book_page(url)
                 book_description = parse_book_page(html_page, url, folder, img_folder)
-                download_txt(book_description['title'], folder, url)
-                download_img(img_folder, book_description['img_url'])
+                download_txt(book_description['title'], folder, url, load_txt=args.skip_txt)
+                download_img(img_folder, book_description['img_url'], load_images=args.skip_imgs)
                 book_descriptions.append(book_description)
                 print(url)
         except requests.HTTPError:
             continue
 
-    with open('books.json', 'w') as file:
+    with open(f'{json_folder}/books.json', 'w') as file:
         json.dump(book_descriptions, file, ensure_ascii=False)
-
-
-
