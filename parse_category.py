@@ -11,5 +11,3 @@ def parse_book_urls(page_id):
     anchors = html_page.find_all(class_='d_book')
     book_urls = [urljoin(url, anchor.find('a')['href']) for anchor in anchors]
     return book_urls
-
-
