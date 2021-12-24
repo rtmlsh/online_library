@@ -116,12 +116,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    folder, img_folder = f'{args.dest_folder}/books', f'{args.dest_folder}/images'
+    folder = f'{args.dest_folder}/books'
+    img_folder = f'{args.dest_folder}/images'
     json_folder = args.json_path
     os.makedirs(folder, exist_ok=True)
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(json_folder, exist_ok=True)
-
 
     book_descriptions = []
     for page_id in range(args.start_id, args.end_id):
@@ -129,9 +129,23 @@ if __name__ == '__main__':
             book_urls = parse_book_urls(page_id)
             for url in book_urls:
                 html_page = get_book_page(url)
-                book_description = parse_book_page(html_page, url, folder, img_folder)
-                download_txt(book_description['title'], folder, url, load_txt=args.skip_txt)
-                download_img(img_folder, book_description['img_url'], load_images=args.skip_imgs)
+                book_description = parse_book_page(
+                    html_page,
+                    url,
+                    folder,
+                    img_folder
+                )
+                download_txt(
+                    book_description['title'],
+                    folder,
+                    url,
+                    load_txt=args.skip_txt
+                )
+                download_img(
+                    img_folder,
+                    book_description['img_url'],
+                    load_images=args.skip_imgs
+                )
                 book_descriptions.append(book_description)
                 print(url)
         except requests.HTTPError:
