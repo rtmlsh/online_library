@@ -1,11 +1,12 @@
 import argparse
+import json
 import os
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-import json
+
 from parse_category import parse_book_urls
 
 
