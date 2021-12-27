@@ -68,17 +68,17 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--start_id',
+        '--start_page',
         type=int,
         default=1,
-        help='Укажите start_id'
+        help='Укажите start_page'
     )
 
     parser.add_argument(
-        '--end_id',
+        '--end_page',
         type=int,
         default=702,
-        help='Укажите end_id'
+        help='Укажите end_page'
     )
 
     parser.add_argument(
@@ -115,9 +115,9 @@ if __name__ == '__main__':
     os.makedirs(json_folder, exist_ok=True)
 
     book_descriptions = []
-    for page_id in range(args.start_id, args.end_id):
+    for page_num in range(args.start_page, args.end_page):
         try:
-            book_urls = parse_book_urls(page_id)
+            book_urls = parse_book_urls(page_num)
             for url in book_urls:
                 html_page = get_book_page(url)
                 book_description = parse_book_page(

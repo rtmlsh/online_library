@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 from check_redirect import check_redirect
 
 
-def parse_book_urls(page_id):
-    url = f'https://tululu.org/l55/{page_id}/'
+def parse_book_urls(page_num):
+    url = f'https://tululu.org/l55/{page_num}/'
     response = requests.get(url)
     response.raise_for_status()
     check_redirect(response.history)
