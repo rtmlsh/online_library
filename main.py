@@ -11,28 +11,26 @@ from parse_category import parse_book_urls
 from check_redirect import check_redirect
 
 
-def download_img(img_folder, img_url, load_images=True):
-    if load_images:
-        response = requests.get(img_url)
-        response.raise_for_status()
-        img_name = urlparse(img_url).path.split('/')[-1]
-        filepath = os.path.join(img_folder, img_name)
-        with open(filepath, 'wb') as file:
-            file.write(response.content)
+def download_img(img_folder, img_url):
+    response = requests.get(img_url)
+    response.raise_for_status()
+    img_name = urlparse(img_url).path.split('/')[-1]
+    filepath = os.path.join(img_folder, img_name)
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
 
 
-def download_txt(title, folder, url, load_txt=True):
-    if load_txt:
-        book_id = urlparse(url).path.strip('/').split('b')[-1]
-        download_url = 'https://tululu.org/txt.php'
-        payload = {'id': book_id}
-        response = requests.get(download_url, params=payload)
-        response.raise_for_status()
-        check_redirect(response.history)
-        filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
-        with open(filepath, 'w') as file:
-            file.write(response.text)
-        return filepath
+def download_txt(title, folder, url):
+    book_id = urlparse(url).path.strip('/').split('b')[-1]
+    download_url = 'https://tululu.org/txt.php'
+    payload = {'id': book_id}
+    response = requests.get(download_url, params=payload)
+    response.raise_for_status()
+    check_redirect(response.history)
+    filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
+    with open(filepath, 'w') as file:
+        file.write(response.text)
+    return filepath
 
 
 def get_book_page(url):
@@ -128,17 +126,17 @@ if __name__ == '__main__':
                     folder,
                     img_folder
                 )
-                download_txt(
-                    book_description['title'],
-                    folder,
-                    url,
-                    load_txt=args.skip_txt
-                )
-                download_img(
-                    img_folder,
-                    book_description['img_url'],
-                    load_images=args.skip_imgs
-                )
+                if args.skip_txt:
+                    download_txt(
+                        book_description['title'],
+                        folder,
+                        url,
+                    )
+                if args.skip_imgs:
+                    download_img(
+                        img_folder,
+                        book_description['img_url']
+                    )
                 book_descriptions.append(book_description)
                 print(url)
         except requests.HTTPError:
