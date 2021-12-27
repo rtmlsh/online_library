@@ -7,8 +7,18 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
-from parse_category import parse_book_urls
 from check_redirect import check_redirect
+from parse_category import parse_book_urls
+
+
+def get_last_page():
+    url = f'https://tululu.org/l55/1/'
+    response = requests.get(url)
+    response.raise_for_status()
+    check_redirect(response.history)
+    html_page = BeautifulSoup(response.text, 'lxml')
+    last_page = html_page.select('.npage')[-1].text
+    return last_page
 
 
 def download_img(img_folder, img_url):
@@ -77,7 +87,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--end_page',
         type=int,
-        default=702,
+        default=get_last_page(),
         help='Укажите end_page'
     )
 
