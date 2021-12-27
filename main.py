@@ -16,7 +16,7 @@ def download_img(img_folder, img_url, load_images=True):
         response.raise_for_status()
         img_name = urlparse(img_url).path.split('/')[-1]
         filepath = os.path.join(img_folder, img_name)
-        with open(f'{filepath}', 'wb') as file:
+        with open(filepath, 'wb') as file:
             file.write(response.content)
 
 
@@ -29,7 +29,7 @@ def download_txt(title, folder, url, load_txt=True):
         response.raise_for_status()
         check_redirect(response.history)
         filepath = os.path.join(folder, f'{sanitize_filename(title)}.txt')
-        with open(f'{filepath}', 'w') as file:
+        with open(filepath, 'w') as file:
             file.write(response.text)
         return filepath
 
@@ -43,16 +43,12 @@ def get_book_page(url):
 
 
 def parse_book_page(html_page, url, folder, img_folder):
-    book_spec_selector = 'body h1'
-    genre_selector = 'span.d_book'
-    anchor_selector = '.bookimage img'
-    user_comments_selector = '.texts'
-    book_spec = html_page.select_one(book_spec_selector).text
+    book_spec = html_page.select_one('body h1').text
     title, author = book_spec.strip().split('::')
-    genre = html_page.select_one(genre_selector).text
+    genre = html_page.select_one('span.d_book').text
     book_genre = genre.split(':')[-1].replace('.', '').strip()
-    anchor = html_page.select_one(anchor_selector)['src']
-    user_comments = html_page.select(user_comments_selector)
+    anchor = html_page.select_one('.bookimage img')['src']
+    user_comments = html_page.select('.texts')
     comments = [comment.text.split(')')[-1] for comment in user_comments]
     book_description = {
         'author': author.strip(),
