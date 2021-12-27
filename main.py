@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 from parse_category import parse_book_urls
+from check_redirect import check_redirect
 
 
 def download_img(img_folder, img_url, load_images=True):
@@ -60,11 +61,6 @@ def parse_book_page(html_page, url, folder, img_folder):
         'book_path': f'{folder}/{title.strip()}.txt'
     }
     return book_description
-
-
-def check_redirect(response_history):
-    if response_history:
-        raise requests.HTTPError('Redirect to main')
 
 
 if __name__ == '__main__':
