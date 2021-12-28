@@ -17,8 +17,7 @@ def get_last_page():
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    page = html_page.select('.npage')[-1].text
-    last_page = int(page) + 1
+    last_page = int(html_page.select('.npage')[-1].text) + 1
     return last_page
 
 
@@ -152,6 +151,6 @@ if __name__ == '__main__':
                 print(url)
         except requests.HTTPError:
             continue
-
+    print(args.last_page)
     with open(f'{json_folder}/books.json', 'w') as file:
         json.dump(book_descriptions, file, ensure_ascii=False)
