@@ -151,6 +151,6 @@ if __name__ == '__main__':
                 print(url)
         except requests.HTTPError:
             continue
-    print(args.last_page)
+
     with open(f'{json_folder}/books.json', 'w') as file:
         json.dump(book_descriptions, file, ensure_ascii=False)
