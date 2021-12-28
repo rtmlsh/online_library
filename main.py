@@ -17,7 +17,8 @@ def get_last_page():
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    last_page = html_page.select('.npage')[-1].text
+    page = html_page.select('.npage')[-1].text
+    last_page = int(page) + 1
     return last_page
 
 
@@ -85,10 +86,10 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--end_page',
+        '--last_page',
         type=int,
         default=get_last_page(),
-        help='Укажите end_page'
+        help='Укажите last_page'
     )
 
     parser.add_argument(
@@ -125,7 +126,7 @@ if __name__ == '__main__':
     os.makedirs(json_folder, exist_ok=True)
 
     book_descriptions = []
-    for page_num in range(args.start_page, args.end_page):
+    for page_num in range(args.start_page, args.last_page):
         try:
             book_urls = parse_book_urls(page_num)
             for url in book_urls:
