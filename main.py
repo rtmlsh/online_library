@@ -17,7 +17,7 @@ def get_last_page():
     response.raise_for_status()
     check_redirect(response.history)
     html_page = BeautifulSoup(response.text, 'lxml')
-    last_page = int(html_page.select('.npage')[-1].text) + 1
+    last_page = int(html_page.select_one('.npage:last-child').text) + 1
     return last_page
 
 
