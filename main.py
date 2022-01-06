@@ -105,14 +105,14 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--skip_imgs',
-        action='store_false',
-        help='Булево значение false, если картинки не нужны'
+        action='store_true',
+        help='Булево значение true, если картинки не нужны'
     )
 
     parser.add_argument(
         '--skip_txt',
-        action='store_false',
-        help='Булево значение false, если txt не нужны'
+        action='store_true',
+        help='Булево значение true, если txt не нужны'
     )
 
     args = parser.parse_args()
@@ -136,13 +136,13 @@ if __name__ == '__main__':
                     folder,
                     img_folder
                 )
-                if args.skip_txt:
+                if not args.skip_txt:
                     download_txt(
                         book_description['title'],
                         folder,
                         url,
                     )
-                if args.skip_imgs:
+                if not args.skip_imgs:
                     download_img(
                         img_folder,
                         book_description['img_url']
