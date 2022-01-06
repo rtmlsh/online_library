@@ -148,7 +148,6 @@ if __name__ == '__main__':
                         book_description['img_url']
                     )
                 book_descriptions.append(book_description)
-                print(url)
         except requests.HTTPError:
             continue
 
