@@ -126,9 +126,9 @@ if __name__ == '__main__':
 
     book_descriptions = []
     for page_num in range(args.start_page, args.last_page):
-        try:
-            book_urls = parse_book_urls(page_num)
-            for url in book_urls:
+        book_urls = parse_book_urls(page_num)
+        for url in book_urls:
+            try:
                 html_page = get_book_page(url)
                 book_description = parse_book_page(
                     html_page,
@@ -148,8 +148,8 @@ if __name__ == '__main__':
                         book_description['img_url']
                     )
                 book_descriptions.append(book_description)
-        except requests.HTTPError:
-            continue
+            except requests.HTTPError as err:
+                continue
 
     with open(f'{json_folder}/books.json', 'w') as file:
         json.dump(book_descriptions, file, ensure_ascii=False)
