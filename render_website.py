@@ -12,11 +12,11 @@ env = Environment(
 with open('results/books.json', 'r') as file:
     books_json = file.read()
 
-books = list(chunked(json.loads(books_json), 2))
+books = json.loads(books_json)
 
 def on_reload(books):
     template = env.get_template('template.html')
-    rendered_page = template.render(books=books)
+    rendered_page = template.render(books=list(chunked(books, 2)))
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
 
