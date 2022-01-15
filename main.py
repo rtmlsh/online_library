@@ -123,6 +123,7 @@ if __name__ == '__main__':
     os.makedirs(folder, exist_ok=True)
     os.makedirs(img_folder, exist_ok=True)
     os.makedirs(json_folder, exist_ok=True)
+    os.makedirs('pages', exist_ok=True)
 
     book_descriptions = []
     for page_num in range(args.start_page, args.last_page):

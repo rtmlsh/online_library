@@ -25,3 +25,4 @@ on_reload(books)
 server = Server()
 server.watch('template.html', on_reload)
 server.serve(root='.')
+
