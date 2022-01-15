@@ -62,7 +62,7 @@ def parse_book_page(html_page, url, folder, img_folder):
     book_description = {
         'author': author.strip(),
         'title': title.strip(),
-        'genre': book_genre,
+        'genre': book_genre.strip(' ').split(','),
         'reviews': comments,
         'img_url': urljoin(url, anchor),
         'img_src': f'/{img_folder}/{anchor.split("/")[-1]}',

@@ -17,7 +17,7 @@ content = list(chunked_even(list(chunked(json.loads(books_json), 2)), 10))
 def on_reload(content):
     template = env.get_template('template.html')
     for num, page in enumerate(content, 1):
-        rendered_page = template.render(books=page, num=num)
+        rendered_page = template.render(books=page, pages=len(content) + 1)
         with open(f'pages/index{num}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
