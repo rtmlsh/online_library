@@ -11,6 +11,7 @@ def on_reload(content, template):
         with open(f'pages/index{num}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
+
 if __name__ == '__main__':
     env = Environment(
         loader=FileSystemLoader('.'),
