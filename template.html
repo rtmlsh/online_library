@@ -12,21 +12,43 @@
   <body>
     <nav aria-label="Page navigation example" style="margin-top: 20px">
       <ul class="pagination justify-content-center">
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">Предыдущая</span>
-          </a>
-        </li>
-        {% for num in range(1, pages) %}
-          <li class="page-item disable" aria-current="page">
-            <a class="page-link" href="index{{ num }}.html">{{ num }}</a>
+        {% if page_num == 1 %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">Предыдущая</span>
+            </a>
           </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="index{{ page_num - 1 }}.html" aria-label="Previous">
+              <span aria-hidden="true">Предыдущая</span>
+            </a>
+          </li>
+        {% endif %}
+        {% for num in range(1, pages + 1) %}
+          {% if num == page_num %}
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="index{{ num }}.html">{{ num }}</a>
+            </li>
+          {% else %}
+            <li class="page-item disable" aria-current="page">
+              <a class="page-link" href="index{{ num }}.html">{{ num }}</a>
+            </li>
+          {% endif %}
         {% endfor %}
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">Следующая</span>
-          </a>
-        </li>
+        {% if page_num == pages %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">Следующая</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="index{{ page_num + 1 }}.html" aria-label="Next">
+              <span aria-hidden="true">Следующая</span>
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </nav>
     {% for book_col_1, book_col_2 in books %}
