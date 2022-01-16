@@ -1,4 +1,10 @@
 lxml~=4.6.4
+bs4~=0.0.1
+pip~=21.2.3
+argparse~=1.4.0
+urllib3~=1.26.7
+setuptools~=57.4.0
 requests~=2.26.0
 pathvalidate~=2.5.0
-bs4~=0.0.1
+Jinja2~=3.0.3
+livereload~=2.6.3
