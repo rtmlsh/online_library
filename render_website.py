@@ -8,8 +8,12 @@ from more_itertools import chunked, chunked_even
 def on_reload(content, template):
     for num, page in enumerate(content, 1):
         rendered_page = template.render(books=page, pages=len(content), page_num=num)
-        with open(f'pages/index{num}.html', 'w', encoding="utf8") as file:
-            file.write(rendered_page)
+        if num == 1:
+            with open(f'pages/index.html', 'w', encoding="utf8") as file:
+                file.write(rendered_page)
+        else:
+            with open(f'pages/index{num}.html', 'w', encoding="utf8") as file:
+                file.write(rendered_page)
 
 
 if __name__ == '__main__':
