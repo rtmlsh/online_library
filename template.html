@@ -74,7 +74,7 @@
           <div class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-4">
-                <img src="{{ book_col_1['img_src'] }}" class="card-img" alt="{{ book_col_1['title'] }}">
+                <img src="..{{ book_col_1['img_src'] }}" class="card-img" alt="{{ book_col_1['title'] }}">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
@@ -83,7 +83,7 @@
                   {% for genre in book_col_1['genre'] %}
                     <p class="badge badge-pill badge-warning">{{ genre }}</p>
                   {% endfor %}
-                  </br><a href="{{ book_col_1['book_path'] }}" class="btn btn-primary" target="_blank">Читать</a>
+                  </br><a href="..{{ book_col_1['book_path'] }}" class="btn btn-primary" target="_blank">Читать</a>
                 </div>
               </div>
             </div>
