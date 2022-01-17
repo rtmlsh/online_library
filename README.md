@@ -50,4 +50,4 @@ python main.py start_id end_id
 
 ## Цель проекта
 Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [Devman](https://dvmn.org/modules/).
-Веб версия [готового проекта](https://rtmlsh.github.io/online_library/pages/index.html)
+Веб версия [готового проекта](https://rtmlsh.github.io/online_library/pages/index.html).
