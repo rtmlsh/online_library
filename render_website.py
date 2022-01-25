@@ -27,13 +27,13 @@ if __name__ == '__main__':
     )
 
     columns = 2
-    page_limit = 10
+    book_limit = 10
 
     with open('results/books.json', 'r') as file:
         books_json = json.load(file)
 
     template = env.get_template('template.html')
-    content = list(chunked_even(list(chunked(books_json, columns)), page_limit))
+    content = list(chunked_even(list(chunked(books_json, columns)), book_limit))
 
     on_reload(content, template)
 
