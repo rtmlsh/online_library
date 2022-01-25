@@ -6,9 +6,9 @@ from more_itertools import chunked, chunked_even
 
 
 def on_reload(content, template):
-    for num, page in enumerate(content, 1):
+    for num, page_content in enumerate(content, 1):
         rendered_page = template.render(
-            books=page,
+            books=page_content,
             pages=len(content),
             page_num=num
         )
