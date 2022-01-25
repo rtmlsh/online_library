@@ -27,10 +27,10 @@ if __name__ == '__main__':
     )
 
     with open('results/books.json', 'r') as file:
-        books_json = file.read()
+        books_json = json.load(file)
 
     template = env.get_template('template.html')
-    content = list(chunked_even(list(chunked(json.loads(books_json), 2)), 10))
+    content = list(chunked_even(list(chunked(books_json, 2)), 10))
 
     on_reload(content, template)
 
