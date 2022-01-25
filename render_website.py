@@ -12,12 +12,12 @@ def on_reload(content, template):
             pages=len(content),
             page_num=num
         )
-        if num == 1:
-            with open(f'pages/index.html', 'w', encoding="utf8") as file:
-                file.write(rendered_page)
-        else:
-            with open(f'pages/index{num}.html', 'w', encoding="utf8") as file:
-                file.write(rendered_page)
+        with open(
+                f'pages/{"index" if num == 1 else f"index{num}"}.html',
+                'w',
+                encoding="utf8"
+        ) as file:
+            file.write(rendered_page)
 
 
 if __name__ == '__main__':
