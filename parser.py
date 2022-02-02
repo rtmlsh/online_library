@@ -93,13 +93,13 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--dest_folder',
-        default='static',
+        default='media',
         help='Укажите каталог для сохранения результатов',
     )
 
     parser.add_argument(
         '--json_path',
-        default='static',
+        default='media',
         help='Укажите каталог для сохранения json'
     )
 

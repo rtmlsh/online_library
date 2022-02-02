@@ -29,7 +29,7 @@ if __name__ == '__main__':
     columns = 2
     book_limit = 10
 
-    with open('static/books.json', 'r') as file:
+    with open('media/books.json', 'r') as file:
         books_json = json.load(file)
 
     template = env.get_template('template.html')
