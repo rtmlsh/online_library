@@ -67,23 +67,24 @@
         {% endif %}
       </ul>
     </nav>
-    {% for book_col_1, book_col_2 in books %}
+    {% for content in books %}
+    {% if content|length % 2 == 0 %}
     <div class="container">
       <div class="row">
         <div class="col">
           <div class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-4">
-                <img src="..{{ book_col_1['img_src']|urlencode }}" class="card-img" alt="{{ book_col_1['title'] }}">
+                <img src="..{{ content[0]['img_src']|urlencode }}" class="card-img" alt="{{ content[0]['title'] }}">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h5 class="card-title">{{ book_col_1['title'] }}</h5>
-                  <h6 class="card-title">{{ book_col_1['author'] }}</h6>
-                  {% for genre in book_col_1['genre'] %}
+                  <h5 class="card-title">{{ content[0]['title'] }}</h5>
+                  <h6 class="card-title">{{ content[0]['author'] }}</h6>
+                  {% for genre in content[0]['genre'] %}
                     <p class="badge badge-pill badge-warning">{{ genre }}</p>
                   {% endfor %}
-                  </br><a href="..{{ book_col_1['book_path']|urlencode }}" class="btn btn-primary" target="_blank">Читать</a>
+                  </br><a href="..{{ content[0]['book_path']|urlencode }}" class="btn btn-primary" target="_blank">Читать</a>
                 </div>
               </div>
             </div>
@@ -93,16 +94,16 @@
           <div class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-4">
-                <img src="..{{ book_col_2['img_src']|urlencode }}" class="card-img" alt="{{ book_col_2['title'] }}">
+                <img src="..{{ content[1]['img_src']|urlencode }}" class="card-img" alt="{{ content[1]['title'] }}">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h5 class="card-title">{{ book_col_2['title'] }}</h5>
-                  <h6 class="card-title">{{ book_col_2['author'] }}</h6>
-                  {% for genre in book_col_2['genre'] %}
+                  <h5 class="card-title">{{ content[1]['title'] }}</h5>
+                  <h6 class="card-title">{{ content[1]['author'] }}</h6>
+                  {% for genre in content[1]['genre'] %}
                     <p class="badge badge-pill badge-warning">{{ genre }}</p>
                   {% endfor %}
-                  </br><a href="..{{ book_col_2['book_path']|urlencode }}" class="btn btn-primary" target="_blank">Читать</a>
+                  </br><a href="..{{ content[1]['book_path']|urlencode }}" class="btn btn-primary" target="_blank">Читать</a>
                 </div>
               </div>
             </div>
@@ -110,6 +111,31 @@
         </div>
       </div>
     </div>
+    {% else %}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+              <div class="col-md-4">
+                <img src="..{{ content[0]['img_src']|urlencode }}" class="card-img" alt="{{ content[0]['title'] }}">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ content[0]['title'] }}</h5>
+                  <h6 class="card-title">{{ content[0]['author'] }}</h6>
+                  {% for genre in content[0]['genre'] %}
+                    <p class="badge badge-pill badge-warning">{{ genre }}</p>
+                  {% endfor %}
+                  </br><a href="..{{ content[0]['book_path']|urlencode }}" class="btn btn-primary" target="_blank">Читать</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
     {% endfor %}
     <nav aria-label="Page navigation example" style="margin-top: 20px">
       <ul class="pagination justify-content-center">

@@ -5,10 +5,11 @@ from livereload import Server
 from more_itertools import chunked, chunked_even
 
 
-def on_reload(content, template):
+def on_reload(content, template, columns):
     for num, page_content in enumerate(content, 1):
+        books = list(chunked(page_content, columns))
         rendered_page = template.render(
-            books=page_content,
+            books=books,
             pages=len(content),
             page_num=num
         )
@@ -33,9 +34,9 @@ if __name__ == '__main__':
         books = json.load(file)
 
     template = env.get_template('template.html')
-    content = list(chunked_even(list(chunked(books, columns)), book_limit))
+    content = list(chunked_even(books, book_limit))
 
-    on_reload(content, template)
+    on_reload(content, template, columns)
 
     server = Server()
     server.watch('template.html', on_reload)
